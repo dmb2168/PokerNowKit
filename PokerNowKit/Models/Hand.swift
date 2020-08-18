@@ -230,7 +230,7 @@ public class Hand {
                                 var winPotSize = (Double(line.components(separatedBy: " collected ").last?.components(separatedBy: " from pot with ").first ?? "0.0") ?? 0.0) * multiplier
 
                                 // remove missing smalls -- poker stars doesnt do this?
-                                winPotSize = winPotSize - (Double(self.smallBlindSize * self.missingSmallBlinds.count) * multiplier)
+                                winPotSize = winPotSize - (Double(self.smallBlindSize * Double(self.missingSmallBlinds.count)) * multiplier)
 
                                 let winDescription = line.components(separatedBy: " from pot with ").last?.components(separatedBy: " (").first ?? "error"
                                 let winningHandComponents = line.components(separatedBy: "hand: ").last?.replacingOccurrences(of: ")", with: "").components(separatedBy: ", ")
@@ -251,7 +251,7 @@ public class Hand {
                                 var gainedPotSize = (Double(line.components(separatedBy: " collected ").last?.components(separatedBy: " from pot").first ?? "0") ?? 0.0) * multiplier
 
                                 // remove missing smalls -- poker stars doesnt do this?
-                                gainedPotSize = gainedPotSize - (Double(self.smallBlindSize * self.missingSmallBlinds.count) * multiplier)
+                                gainedPotSize = gainedPotSize - (Double(self.smallBlindSize * Double(self.missingSmallBlinds.count)) * multiplier)
 
                                 
                                 if self.flop == nil {
