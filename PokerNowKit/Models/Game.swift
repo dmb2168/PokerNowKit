@@ -137,7 +137,7 @@ public class Game: NSObject {
                 let stackSize = playerWithStack.components(separatedBy: "\" (").last?.replacingOccurrences(of: ")", with: "")
                 
                 if self.players.filter({$0.id == nameIdArray?.last}).count == 0 {
-                    let player = Player(admin: false, id: nameIdArray?.last, stack: Int(stackSize ?? "0") ?? 0, name: nameIdArray?.first)
+                    let player = Player(admin: false, id: nameIdArray?.last, stack: Double(stackSize ?? "0.0") ?? 0, name: nameIdArray?.first)
                     self.players.append(player)
                     
                     self.currentHand?.seats.append(Seat(player: player, summary: "\(player.name ?? "Unknown") didn't show and lost", preFlopBet: false, number: seatNumberInt))
@@ -163,7 +163,7 @@ public class Game: NSObject {
             }
         } else if msg?.starts(with: "flop") ?? false {
             self.resetPotEquity()
-            self.currentHand?.uncalledBet = 0
+            self.currentHand?.uncalledBet = 0.0
 
             let line = msg?.slice(from: "[", to: "]")
             self.currentHand?.flop = line?.replacingOccurrences(of: "flop: ", with: "").components(separatedBy: ", ").map({
@@ -176,7 +176,7 @@ public class Game: NSObject {
 
         } else if msg?.starts(with: "turn") ?? false {
             self.resetPotEquity()
-            self.currentHand?.uncalledBet = 0
+            self.currentHand?.uncalledBet = 0.0
 
             let line = msg?.slice(from: "[", to: "]")
             self.currentHand?.turn = EmojiCard(rawValue: line?.replacingOccurrences(of: "turn: ", with: "") ?? "error")?.emojiFlip ?? .error
@@ -187,7 +187,7 @@ public class Game: NSObject {
 
         } else if msg?.starts(with: "river") ?? false {
             self.resetPotEquity()
-            self.currentHand?.uncalledBet = 0
+            self.currentHand?.uncalledBet = 0.0
 
             let line = msg?.slice(from: "[", to: "]")
             self.currentHand?.river = EmojiCard(rawValue: line?.replacingOccurrences(of: "river: ", with: "") ?? "error")?.emojiFlip ?? .error
@@ -202,20 +202,20 @@ public class Game: NSObject {
                 self.players.removeAll(where: {$0.id == nameIdArray?.last})
                 
                 if msg?.contains("big blind") ?? false {
-                    let bigBlindSize = Int(msg?.components(separatedBy: "big blind of ").last ?? "0") ?? 0
+                    let bigBlindSize = Double(msg?.components(separatedBy: "big blind of ").last ?? "0.0") ?? 0.0
                     self.currentHand?.bigBlindSize = bigBlindSize
-                    self.currentHand?.pot = (self.currentHand?.pot ?? 0) + bigBlindSize
+                    self.currentHand?.pot = (self.currentHand?.pot ?? 0.0) + bigBlindSize
                     self.currentHand?.uncalledBet = bigBlindSize
                     self.currentHand?.bigBlind.append(player)
 
                     player.existingPotEquity = bigBlindSize
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") posts big \(bigBlindSize)  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") posts big \(bigBlindSize)  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
 
                 if msg?.contains("small blind") ?? false {
-                    let smallBlindSize = Int(msg?.components(separatedBy: "small blind of ").last ?? "0") ?? 0
+                    let smallBlindSize = Double(msg?.components(separatedBy: "small blind of ").last ?? "0.0") ?? 0.0
                     self.currentHand?.smallBlindSize = smallBlindSize
                     if msg?.contains("missing") ?? false {
                         self.currentHand?.missingSmallBlinds.append(player)
@@ -224,59 +224,59 @@ public class Game: NSObject {
                         player.existingPotEquity = smallBlindSize
                     }
                     
-                    self.currentHand?.pot = (self.currentHand?.pot ?? 0) + smallBlindSize
+                    self.currentHand?.pot = (self.currentHand?.pot ?? 0.0) + smallBlindSize
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") posts small \(smallBlindSize)  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") posts small \(smallBlindSize)  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
 
                 if msg?.contains("posts a straddle") ?? false {
-                    let straddleSize = Int(msg?.components(separatedBy: "of ").last ?? "0") ?? 0
-                    self.currentHand?.pot = (self.currentHand?.pot ?? 0) + straddleSize - player.existingPotEquity
-                    self.currentHand?.uncalledBet = straddleSize - (self.currentHand?.uncalledBet ?? 0)
+                    let straddleSize = Double(msg?.components(separatedBy: "of ").last ?? "0.0") ?? 0.0
+                    self.currentHand?.pot = (self.currentHand?.pot ?? 0.0) + straddleSize - player.existingPotEquity
+                    self.currentHand?.uncalledBet = straddleSize - (self.currentHand?.uncalledBet ?? 0.0)
 
                     player.existingPotEquity = straddleSize
 
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") straddles \(straddleSize)  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") straddles \(straddleSize)  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
 
                 if msg?.contains("raises") ?? false {
-                    let raiseSize = Int(msg?.components(separatedBy: "with ").last ?? "0") ?? 0
-                    self.currentHand?.pot = (self.currentHand?.pot ?? 0) + raiseSize - player.existingPotEquity
-                    self.currentHand?.uncalledBet = raiseSize - (self.currentHand?.uncalledBet ?? 0)
+                    let raiseSize = Double(msg?.components(separatedBy: "with ").last ?? "0") ?? 0.0
+                    self.currentHand?.pot = (self.currentHand?.pot ?? 0.0) + raiseSize - player.existingPotEquity
+                    self.currentHand?.uncalledBet = raiseSize - (self.currentHand?.uncalledBet ?? 0.0)
 
                     player.existingPotEquity = raiseSize
 
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") raises \(raiseSize)  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") raises \(raiseSize)  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
 
                 if msg?.contains("calls") ?? false {
-                    let callSize = Int(msg?.components(separatedBy: "with ").last ?? "0") ?? 0
-                    self.currentHand?.pot = (self.currentHand?.pot ?? 0) + callSize - player.existingPotEquity
-                    if (self.currentHand?.uncalledBet ?? 0) == 0 {
+                    let callSize = Double(msg?.components(separatedBy: "with ").last ?? "0.0") ?? 0.0
+                    self.currentHand?.pot = (self.currentHand?.pot ?? 0.0) + callSize - player.existingPotEquity
+                    if (self.currentHand?.uncalledBet ?? 0.0) == 0.0 {
                         self.currentHand?.uncalledBet = callSize
                     }
 
                     player.existingPotEquity = callSize
 
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") calls \(callSize)  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") calls \(callSize)  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
                 
                 if msg?.contains("checks") ?? false {
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") checks  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") checks  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
 
                 if msg?.contains("folds") ?? false {
                     if debugHandAction {
-                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") folds  (Pot: \(self.currentHand?.pot ?? 0))")
+                        print("#\(self.currentHand?.id ?? 0) - \(player.name ?? "Unknown Player") folds  (Pot: \(self.currentHand?.pot ?? 0.0))")
                     }
                 }
 
@@ -291,7 +291,7 @@ public class Game: NSObject {
         if msg?.contains("approved") ?? false {
             let nameIdArray = msg?.replacingOccurrences(of: "The admin approved the player \"", with: "").split(separator: "\"").first?.components(separatedBy: " @ ")
             if self.players.filter({$0.id == nameIdArray?.last}).count != 1 {
-                let startingStackSize = Int(msg?.components(separatedBy: "with a stack of ").last?.replacingOccurrences(of: ".", with: "") ?? "0") ?? 0
+                let startingStackSize = Double(msg?.components(separatedBy: "with a stack of ").last?.replacingOccurrences(of: ".", with: "") ?? "0.0") ?? 0.0
                 let player = Player(admin: false, id: nameIdArray?.last, stack: startingStackSize, name: nameIdArray?.first)
                 self.players.append(player)
             } else {
@@ -299,7 +299,7 @@ public class Game: NSObject {
                 if var player = self.players.filter({$0.id == nameIdArray?.last}).first {
                     self.players.removeAll(where: {$0.id == nameIdArray?.last})
                     player.sitting = true
-                    let startingStackSize = Int(msg?.components(separatedBy: "with a stack of ").last?.replacingOccurrences(of: ".", with: "") ?? "0") ?? 0
+                    let startingStackSize = Double(msg?.components(separatedBy: "with a stack of ").last?.replacingOccurrences(of: ".", with: "") ?? "0.0") ?? 0.0
                     player.stack = startingStackSize
 
                     self.players.append(player)
@@ -313,7 +313,7 @@ public class Game: NSObject {
         let nameIdArray = msg?.replacingOccurrences(of: "The player \"", with: "").split(separator: "\"").first?.components(separatedBy: " @ ")
 
         if self.players.filter({$0.id == nameIdArray?.last}).count != 1 {
-            let player = Player(admin: false, id: nameIdArray?.last, stack: 0, name: nameIdArray?.first)
+            let player = Player(admin: false, id: nameIdArray?.last, stack: 0.0, name: nameIdArray?.first)
             self.players.append(player)
         }
 

@@ -14,9 +14,9 @@ struct Player {
     var sitting: Bool = true
     
     // this is unfortunate -- basically it is the small blind
-    var existingPotEquity: Int = 0
+    var existingPotEquity: Double = 0.0
     
     var id: String?
-    var stack: Int = 0
+    var stack: Double = 0.0
     var name: String?
 }

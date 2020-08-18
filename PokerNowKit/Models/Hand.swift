@@ -14,8 +14,8 @@ public class Hand {
     var river: Card?
     var turn: Card?
     var flop: [Card]?
-    var pot: Int = 0
-    var uncalledBet: Int = 0
+    var pot: Double = 0
+    var uncalledBet: Double = 0
     var id: UInt64 = 0
     var dealer: Player?
     var missingSmallBlinds: [Player] = []
@@ -24,8 +24,8 @@ public class Hand {
     var players: [Player] = []
     var seats: [Seat] = []
     var lines: [String] = []
-    var smallBlindSize: Int = 0
-    var bigBlindSize: Int = 0
+    var smallBlindSize: Double = 0
+    var bigBlindSize: Double = 0
 
     var printedShowdown: Bool = false
     
@@ -144,7 +144,7 @@ public class Hand {
                                 self.seats[index].preFlopBet = true
                             }
 
-                            let betSize = (Double(line.replacingOccurrences(of: " and go all in", with: "").components(separatedBy: " ").last ?? "0") ?? 0) * multiplier
+                            let betSize = (Double(line.replacingOccurrences(of: " and go all in", with: "").components(separatedBy: " ").last ?? "0.0") ?? 0.0) * multiplier
                             lines.append("\(player.name ?? "unknown"): bets \(String(format: "$%.02f", betSize))")
                             currentBet = betSize
                             isFirstAction = false
@@ -158,7 +158,7 @@ public class Hand {
                                 self.seats[index].preFlopBet = true
                             }
 
-                            let straddleSize = (Double(line.components(separatedBy: "of ").last ?? "0") ?? 0) * multiplier
+                            let straddleSize = (Double(line.components(separatedBy: "of ").last ?? "0.0") ?? 0.0) * multiplier
                             lines.append("\(player.name ?? "unknown"): raises \(String(format: "$%.02f", straddleSize - currentBet)) to \(String(format: "$%.02f", straddleSize))")
                             currentBet = straddleSize
                             previousAction[player.id ?? "error"] = straddleSize
@@ -170,7 +170,7 @@ public class Hand {
                                 self.seats[index].preFlopBet = true
                             }
 
-                            let raiseSize = (Double(line.replacingOccurrences(of: " and go all in", with: "").components(separatedBy: "to ").last ?? "0") ?? 0) * multiplier
+                            let raiseSize = (Double(line.replacingOccurrences(of: " and go all in", with: "").components(separatedBy: "to ").last ?? "0.0") ?? 0.0) * multiplier
                             if isFirstAction {
                                 lines.append("\(player.name ?? "unknown"): bets \(String(format: "$%.02f", raiseSize))")
                                 currentBet = raiseSize
@@ -187,8 +187,8 @@ public class Hand {
                                 self.seats[index].preFlopBet = true
                             }
 
-                            let callAmount = line.replacingOccurrences(of: " and go all in", with: "").components(separatedBy: "calls ").last ?? "0"
-                            let callSize = (Double(callAmount) ?? 0) * multiplier
+                            let callAmount = line.replacingOccurrences(of: " and go all in", with: "").components(separatedBy: "calls ").last ?? "0.0"
+                            let callSize = (Double(callAmount) ?? 0.0) * multiplier
                             if isFirstAction {
                                 lines.append("\(player.name ?? "unknown"): bets \(String(format: "$%.02f", callSize))")
                                 currentBet = callSize
@@ -227,7 +227,7 @@ public class Hand {
                         if line.contains("collected ") {
                             // has showdown
                             if line.contains(" from pot with ") {
-                                var winPotSize = (Double(line.components(separatedBy: " collected ").last?.components(separatedBy: " from pot with ").first ?? "0") ?? 0.0) * multiplier
+                                var winPotSize = (Double(line.components(separatedBy: " collected ").last?.components(separatedBy: " from pot with ").first ?? "0.0") ?? 0.0) * multiplier
 
                                 // remove missing smalls -- poker stars doesnt do this?
                                 winPotSize = winPotSize - (Double(self.smallBlindSize * self.missingSmallBlinds.count) * multiplier)
@@ -292,13 +292,13 @@ public class Hand {
             
             if line.starts(with: "Uncalled bet") {
                 let uncalledString = line.components(separatedBy: " returned to").first?.replacingOccurrences(of: "Uncalled bet of ", with: "")
-                self.uncalledBet = Int(uncalledString ?? "0") ?? 0
+                self.uncalledBet = Double(uncalledString ?? "0") ?? 0.0
             }
             
             if line.starts(with: "flop:") {
                 lines.append("*** FLOP *** [\(self.flop?.map({$0.rawValue}).joined(separator: " ") ?? "error")]")
                 isFirstAction = true
-                currentBet = 0
+                currentBet = 0.0
                 for player in self.players {
                     previousAction[player.id ?? "error"] = 0
                 }
@@ -308,7 +308,7 @@ public class Hand {
             if line.starts(with: "turn:") {
                 lines.append("*** TURN *** [\(self.flop?.map({$0.rawValue}).joined(separator: " ") ?? "error")] [\(self.turn?.rawValue ?? "error")]")
                 isFirstAction = true
-                currentBet = 0
+                currentBet = 0.0
                 for player in self.players {
                     previousAction[player.id ?? "error"] = 0
                 }
@@ -318,7 +318,7 @@ public class Hand {
             if line.starts(with: "river:") {
                 lines.append("*** RIVER *** [\(self.flop?.map({$0.rawValue}).joined(separator: " ") ?? "error") \(self.turn?.rawValue ?? "error")] [\(self.river?.rawValue ?? "error")]")
                 isFirstAction = true
-                currentBet = 0
+                currentBet = 0.0
                 for player in self.players {
                     previousAction[player.id ?? "error"] = 0
                 }
@@ -327,7 +327,7 @@ public class Hand {
             
             if self.lines.last == line {
                 lines.append("*** SUMMARY ***")
-                lines.append("Total pot: \(String(format: "$%.02f", totalPotSize)) | Rake 0")
+                lines.append("Total pot: \(String(format: "$%.02f", totalPotSize)) | Rake 0.0")
                 var board: [Card] = []
                 board.append(contentsOf: self.flop ?? [])
                 if let turn = self.turn { board.append(turn) }
