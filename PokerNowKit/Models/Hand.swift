@@ -295,7 +295,7 @@ public class Hand {
                 self.uncalledBet = Double(uncalledString ?? "0") ?? 0.0
             }
             
-            if line.starts(with: "flop:") {
+            if line.starts(with: "Flop:") {
                 lines.append("*** FLOP *** [\(self.flop?.map({$0.rawValue}).joined(separator: " ") ?? "error")]")
                 isFirstAction = true
                 currentBet = 0.0
@@ -305,7 +305,7 @@ public class Hand {
                 streetDescription = "on the Flop"
             }
 
-            if line.starts(with: "turn:") {
+            if line.starts(with: "Turn:") {
                 lines.append("*** TURN *** [\(self.flop?.map({$0.rawValue}).joined(separator: " ") ?? "error")] [\(self.turn?.rawValue ?? "error")]")
                 isFirstAction = true
                 currentBet = 0.0
@@ -315,7 +315,7 @@ public class Hand {
                 streetDescription = "on the Turn"
             }
 
-            if line.starts(with: "river:") {
+            if line.starts(with: "River:") {
                 lines.append("*** RIVER *** [\(self.flop?.map({$0.rawValue}).joined(separator: " ") ?? "error") \(self.turn?.rawValue ?? "error")] [\(self.river?.rawValue ?? "error")]")
                 isFirstAction = true
                 currentBet = 0.0

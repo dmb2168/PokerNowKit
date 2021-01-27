@@ -179,7 +179,7 @@ public class Game: NSObject {
             self.currentHand?.uncalledBet = 0.0
 
             let line = msg?.slice(from: "[", to: "]")
-            self.currentHand?.turn = EmojiCard(rawValue: line?.lowercased().replacingOccurrences(of: "Turn: ", with: "") ?? "error")?.emojiFlip ?? .error
+            self.currentHand?.turn = EmojiCard(rawValue: line?.replacingOccurrences(of: "Turn: ", with: "") ?? "error")?.emojiFlip ?? .error
 
             if debugHandAction {
                 print("#\(self.currentHand?.id ?? 0) - turn: \(self.currentHand?.turn?.rawValue ?? "?")")

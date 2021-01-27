@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "PokerNowKit"
-  s.version      = "0.1.2"
+  s.version      = "0.1.3"
   s.summary      = "Shared framework of PokerNow.club log parsing code"
   s.homepage     = "https://github.com/dmb2168/PokerNowKit"
   s.license      = { :type => "MIT", :file => "LICENSE" }
